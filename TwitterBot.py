@@ -8,7 +8,6 @@
 from twitter import *
 import json
 import random
-import tweepy
 from urllib import unquote
 
 # In order to use the Twitter API, we need to authenticate ourselves.
