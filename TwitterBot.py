@@ -5,6 +5,7 @@
 # Authors: Matthew Shiroma and Ryan Britton
 # Version 1.0
 import twitter
+import logging
 import json
 import random
 from urllib import unquote
