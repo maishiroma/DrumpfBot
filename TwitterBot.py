@@ -156,7 +156,7 @@ try:
         publish = False
 
     if publish:
-        twitter_client.retweet(tweet['id'])
+        twitter_api.statuses.retweet(tweet[associated_tweet.get('id')])
         logging.debug("RT: {}".format(tweet['text']))
 
 except Exception as ex:
