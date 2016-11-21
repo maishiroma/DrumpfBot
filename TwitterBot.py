@@ -4,8 +4,7 @@
 # https://github.com/sixohsix/twitter for the type of API we're using
 # Authors: Matthew Shiroma and Ryan Britton
 # Version 1.0
-
-from twitter import *
+import twitter
 import json
 import random
 from urllib import unquote
