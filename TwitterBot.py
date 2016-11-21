@@ -157,8 +157,7 @@ try:
         twitter_api.statuses.retweet(id=tweet.get('id'))
         logging.debug("RT: {}".format(tweet['text']))
 
-except Exception as ex:
-    logging.error(ex)
+
 
 
 
