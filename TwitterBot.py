@@ -1,225 +1,174 @@
 # twitterBot.py
 # Class Project for CPSC 353, where we make a Twitter Bot that retweets popular tweets from popular topics.
+# Refer to https://dev.twitter.com/rest/reference for methods usage
+# https://github.com/sixohsix/twitter for the type of API we're using
 # Authors: Matthew Shiroma and Ryan Britton
 # Version 1.0
-
 import twitter
+import logging
+import json
+import random
+from urllib import unquote
 
-# XXX: Go to http://dev.twitter.com/apps/new to create an app and get values
-# for these credentials, which you'll need to provide in place of these
-# empty string values that are defined as placeholders.
-# See https://dev.twitter.com/docs/auth/oauth for more information
-# on Twitter's OAuth implementation.
-
-print 'Example 1'
-print 'Establish Authentication Credentials'
-CONSUMER_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxx'
-CONSUMER_SECRET = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-OAUTH_TOKEN = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-OAUTH_TOKEN_SECRET = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-
-auth = twitter.oauth.OAuth(OAUTH_TOKEN, OAUTH_TOKEN_SECRET,
-                           CONSUMER_KEY, CONSUMER_SECRET)
-
-twitter_api = twitter.Twitter(auth=auth)
-
-print "Nothing to see by displaying twitter_api except that it's now a defined variable"
-print
-print twitter_api
-print
-raw_input('Press Enter to see Example 2')
-print
-
-print "---------------------------------------------------------------------"
-print 'Example 2 - Display world and US trends'
-# The Yahoo! Where On Earth ID for the entire world is 1.
-# See https://dev.twitter.com/docs/api/1.1/get/trends/place and
-# http://developer.yahoo.com/geo/geoplanet/
-
+# In order to use the Twitter API, we need to authenticate ourselves.
+CONSUMER_KEY = 'zjxEmYxGwIHUYLhT9RicrVRNv'
+CONSUMER_SECRET = 'fvqPvStA7SF3Ai9pv8zraK5M2aZtfEtF5PkEr8smit9PmLkTE3'
+OAUTH_TOKEN = '773755889107042305-WOaFeB3FiK7xvPg1LZQmFUM7uABgasy'
+OAUTH_TOKEN_SECRET = 'v1KAZgsHYXvBot3cIeocEKmKe36MoFmG7BvBpe8EJgJWo'
 WORLD_WOE_ID = 1
 US_WOE_ID = 23424977
 
-# Prefix ID with the underscore for query string parameterization.
-# Without the underscore, the twitter package appends the ID value
-# to the URL itself as a special case keyword argument.
+auth = twitter.oauth.OAuth(OAUTH_TOKEN, OAUTH_TOKEN_SECRET, CONSUMER_KEY, CONSUMER_SECRET)
+twitter_api = twitter.Twitter(auth=auth)
 
+# We now get the trends from the world and the US and compare them to see where they overlap to find the most popular trend.
 world_trends = twitter_api.trends.place(_id=WORLD_WOE_ID)
 us_trends = twitter_api.trends.place(_id=US_WOE_ID)
-print 'Display World Trends'
-print
-print world_trends
-print
-print 'Display US trends'
-print
-print us_trends
-print
-raw_input("Press Enter to see Example 3 ")
-print
-print "---------------------------------------------------------------------"
-print 'Example 3. Displaying API responses as pretty-printed JSON '
-print
-raw_input("Press Enter to see Example 3 ")
-print
-import json
-print
-print 'World trends with json.dumps'
-print json.dumps(world_trends, indent=1)
-print
-print
-raw_input("Press Enter to see US trends ")
-print
-print 'US trends with json.dumps'
-print json.dumps(us_trends, indent=1)
-print
-raw_input("Press Enter to see Example 4 ")
-print
-print "---------------------------------------------------------------------"
-print 'Example 4. Computing the intersection of two sets of trends'
+
 world_trends_set = set([trend['name']
                         for trend in world_trends[0]['trends']])
 
 us_trends_set = set([trend['name']
                      for trend in us_trends[0]['trends']])
 
+# We get the popular trends right now in a set.
 common_trends = world_trends_set.intersection(us_trends_set)
-
+print "Here's the top trends: "
 print common_trends
-print
-print
-print "---------------------------------------------------------------------"
-print 'Example 5. Collecting search results'
-print
-raw_input("Press Enter to see Example 5 ")
-print
-# Import unquote to prevent url encoding errors in next_results
-from urllib import unquote
 
-# XXX: Set this variable to a trending topic,
-# or anything else for that matter. The example query below
-# was a trending topic when this content was being developed
-# and is used throughout the remainder of this chapter.
+# In order to get a "random" top trend, we first pop off the first trend and generates a random number using the
+# length of the set. If it's not 0, a new trend will be found by iterating through the set X numb of times
+# X = rand
+numbTweets = 1000
+top_trend = str(common_trends.pop())
+rand = random.randrange(0,len(common_trends))
 
-#q = '#MentionSomeoneImportantForYou'
-q = raw_input('Enter a search term: ')
+if(rand != 0):
+    while(rand > 0):
+        top_trend = str(common_trends.pop())
+        rand = rand - 1
 
-#print q
-#raw_input("Press Enter to continue")
+print "The top trend that's choosen is: "
+print top_trend
 
-count = 1000
-
-# See https://dev.twitter.com/docs/api/1.1/get/search/tweets
-
-search_results = twitter_api.search.tweets(q=q, count=count)
-
+# We then search through 1000 tweets using that top trend. We then only take the status part of the search, which is
+# the list of tweets that contain the top trend. This is a Dictionary object
+search_results = twitter_api.search.tweets(q=top_trend, count=numbTweets)
 statuses = search_results['statuses']
 
+# Likes/Retweet Solution: We look through the results to find statuses that have more than 100 retweets/favorites on it.
+# If it does, we then access the original tweet (if it's a retweet) from it and putting it into a list.
+# Else, we simply put that tweet into the list.
 
-# Iterate through 5 more batches of results by following the cursor
+modified_results = []
+for curr_tweet in statuses:
+    if(curr_tweet.get('retweet_count') > 100 or curr_tweet.get('favorite_count') > 100):
+        if(curr_tweet.get('retweeted_status') != None):
+            print("Tweet was a retweet.")
+            orig_tweet = curr_tweet.get('retweeted_status')
+            print(orig_tweet.get('text'))
+            print(orig_tweet.get('favorite_count'))
+            print(orig_tweet.get('retweet_count'))
 
-for _ in range(5):
-    print "Length of statuses", len(statuses)
-    try:
-        next_results = search_results['search_metadata']['next_results']
-    except KeyError, e: # No more results when next_results doesn't exist
-        break
+            if(orig_tweet not in modified_results):
+                modified_results.append(orig_tweet)
+                print("Added tweet into list")
 
-    # Create a dictionary from next_results, which has the following form:
-    # ?max_id=313519052523986943&q=NCAA&include_entities=1
-    kwargs = dict([ kv.split('=') for kv in next_results[1:].split("&") ])
+        else:
+            print("Tweet was an ORIGINAL tweet")
+            print(curr_tweet.get('text'))
+            print(curr_tweet.get('favorite_count'))
+            print(curr_tweet.get('retweet_count'))
 
-    search_results = twitter_api.search.tweets(**kwargs)
-    statuses += search_results['statuses']
+            if(curr_tweet not in modified_results):
+                modified_results.append(curr_tweet)
+                print("Added tweet into list")
+        print
 
-# Show one sample search result by slicing the list...
-print json.dumps(statuses[0], indent=1)
+# From here, we look through the list we made and see which tweet has the greatest amount of likes and retweets. Once
+# we find one, we store it for later use. Favorite count preceeds over retweet count.
+most_liked_amount = 0
+most_retweeted_amount = 0
+popular_tweet = None
+for curr_tweet in modified_results:
+    if(curr_tweet.get('favorite_count') > most_liked_amount and curr_tweet.get('retweet_count') > most_retweeted_amount):
+        popular_tweet = curr_tweet
+        most_liked_amount = curr_tweet.get('favorite_count')
+        most_retweeted_amount = curr_tweet.get('retweet_count')
+    elif(curr_tweet.get('favorite_count') > most_liked_amount):
+        popular_tweet = curr_tweet
+        most_liked_amount = curr_tweet.get('favorite_count')
+    elif(curr_tweet.get('retweet_count') > most_retweeted_amount):
+        popular_tweet = curr_tweet
+        most_retweeted_amount = curr_tweet.get('retweet_count')
 
-print
-raw_input("Press Enter to see Example 6 ")
-print
-print "---------------------------------------------------------------------"
-print 'Example 6. Extracting text, screen names, and hashtags from tweets'
-print
-raw_input("Press Enter to see Example 6 ")
-print
-status_texts = [ status['text']
-                 for status in statuses ]
+if(popular_tweet != None):
+    print("Most popular tweet is: ")
+    print(popular_tweet.get('text'))
+    print(popular_tweet.get('favorite_count'))
+    print(popular_tweet.get('retweet_count'))
 
-screen_names = [ user_mention['screen_name']
-                 for status in statuses
-                     for user_mention in status['entities']['user_mentions'] ]
+# Sentiment analysis solution: Analyse all of the tweets gotten through the top trend by first, extracting all of the
+# words from a tweet, and analyzing their sentiment value. The highest sentiment score along with the tweet that has it
+# will be saved after the main analysis loop is done.
 
-hashtags = [ hashtag['text']
-             for status in statuses
-                 for hashtag in status['entities']['hashtags'] ]
+# We convert the file into a usable format.
+sentiment_word_file = open('AFINN-111.txt')
+sentiment_word_scores = {}
+for line in sentiment_word_file:
+    term, score  = line.split("\t")
+    sentiment_word_scores[term] = int(score)
 
-# Compute a collection of all words from all tweets
-words = [ w
-          for t in status_texts
-              for w in t.split() ]
+# We analyze the tweets we've gotten using the score dictionary we created.
+highest_score = 0
+associated_tweet = None
+for curr_tweet in modified_results:
 
-# Explore the first 5 items for each...
+    # We extract out the individual words in the tweet.
+    words_in_tweet = curr_tweet.get('text').split()
 
-print json.dumps(status_texts[0:5], indent=1)
-print json.dumps(screen_names[0:5], indent=1)
-print json.dumps(hashtags[0:5], indent=1)
-print json.dumps(words[0:5], indent=1)
+    #  Using the score file, we grade the tweet by seeing if it has key words.
+    tweet_sentiment = 0
+    for curr_word in words_in_tweet:
+        uword = curr_word.encode('utf-8')
+        if uword in sentiment_word_scores.keys():
+            tweet_sentiment = tweet_sentiment + sentiment_word_scores[curr_word]
 
+    # We then store the tweet along with its score in a variable if its sentiment value beats he highest one.
+    if(tweet_sentiment > highest_score):
+        highest_score = tweet_sentiment
+        associated_tweet = curr_tweet
 
-
-print
-raw_input("Press Enter to see Example 7 ")
-print
-print "---------------------------------------------------------------------"
-print 'Example 7. Calculating lexical diversity for tweets'
-
-# A function for computing lexical diversity
-def lexical_diversity(tokens):
-    return 1.0*len(set(tokens))/len(tokens)
-
-# A function for computing the average number of words per tweet
-def average_words(statuses):
-    total_words = sum([ len(s.split()) for s in statuses ])
-    return 1.0*total_words/len(statuses)
-print 'Lexical diversity of words: '
-print lexical_diversity(words)
-print 'Lexical diversity of screen names: '
-print lexical_diversity(screen_names)
-print 'Lexical diversity of hashtags: '
-print lexical_diversity(hashtags)
-print 'Average number of words per tweet: '
-print average_words(status_texts)
-
-print
-raw_input("Press Enter to see Example 8 ")
-print
-print "---------------------------------------------------------------------"
-print 'Example 8. Looking up users who have retweeted a status'
-
-
-# Get the original tweet id for a tweet from its retweeted_status node
-# and insert it here in place of the sample value that is provided
-# from the text of the book
-
-_retweets = twitter_api.statuses.retweets(id=317127304981667841)
-print [r['user']['screen_name'] for r in _retweets]
+if(associated_tweet != None):
+    print("The tweet that receive the highest score was ")
+    print(associated_tweet.get('text'))
+    print(associated_tweet.get('favorite_count'))
+    print(associated_tweet.get('retweet_count'))
+    print(highest_score)
 
 
-print
-raw_input("Press Enter to see Example 9 ")
-print
+tweet = associated_tweet
+try:
+    publish = True
 
-print "---------------------------------------------------------------------"
-print 'Example 9. Sentiment Analysis on the search term from Example 5'
-sent_file = open('AFINN-111.txt')
+    if tweet.get('lang') and tweet.get('lang') != 'en':
+        publish = False
 
-scores = {} # initialize an empty dictionary
-for line in sent_file:
-    term, score  = line.split("\t")  # The file is tab-delimited. "\t" means "tab character"
-    scores[term] = int(score)  # Convert the score to an integer.
+    if publish:
+        twitter_api.statuses.retweet(id=tweet.get('id'))
+        logging.debug("RT: {}".format(tweet['text']))
+except Exception, ex:
+    print(ex)
 
-score = 0
-for word in words:
-    uword = word.encode('utf-8')
-    if uword in scores.keys():
-        score = score + scores[word]
-print float(score)
+
+
+
+
+# tweetNumb = random.randrange(0,len(statuses))
+# selected_tweet_ID = statuses[tweetNumb].get('id')
+# print("The selected tweet's ID is: ")
+# print(selected_tweet_ID)
+# testStatus = twitter_api.statuses.update(status="I FINALLY DID IT!")
+# print json.dumps(testStatus, indent=1)
+# testStatus = twitter_api.statuses.retweet(id=selected_tweet_ID)
+print "End of Program!"
