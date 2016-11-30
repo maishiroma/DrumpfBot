@@ -1,7 +1,12 @@
 # DrumpfBot
 Our class project for CPSC 353 will be to create a Twitter program using the basis of the Sentiment Analysis project we made earlier and add on more features. We are planning to make a “Twitter Bot” (a Twitter user that is controlled by a computer rather than a person) that will analyze the sentiment stream every 20 minutes. After every analysis, it will determine which hashtag is the most liked out of all of the tweets it found. Once it finds the most positive post with said popular hashtag and retweet it.
 
-## Goal for Next Submission
+## Current Functionality
+- Searches and stores 1000 tweets in a Dictionary that's relating to a top trend, which is choosen randomly.
+- From that, it creates a new List that only has tweets that have more than 100 likes or retweets. 
+- Goes through the new List to finds a tweet that has the most positive sentiment score and retweets it. 
+
+## Goals for Next Submission
 - Create a Twitter account that will host the program retweets.
 - Code the part of program that will periodically retweet tweets.
 
