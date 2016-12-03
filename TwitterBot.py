@@ -159,8 +159,8 @@ def retweet():
                     if (tweet.get('id') == new_tweet.get('id')):
                         publish = False
         if publish:
-            twitter_api.statuses.retweet(id=tweet.get('id'))
-            logging.debug("RT: {}".format(tweet['text']))
+            twitter_api.statuses.retweet(id=new_tweet.get('id'))
+            logging.debug("RT: {}".format(new_tweet['text']))
 
 
     time.sleep(20)
