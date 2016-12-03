@@ -45,7 +45,7 @@ def retweet():
         else:
             trends_in_string = trends_in_string + str(trend) + ", "
 
-    print "Here's the top trends at this moment in time: " + trends_in_string
+    print "Here's the top trends at this moment in time: " + trends_in_string + "\n"
 
     # In order to get a "random" top trend, we first pop off the first trend and generates a random number using the
     # length of the set. If it's not 0, a new trend will be found by iterating through the set X numb of times
@@ -59,7 +59,7 @@ def retweet():
             top_trend = str(common_trends.pop())
             rand = rand - 1
 
-    print "The top trend that's choosen is: " + str(top_trend)
+    print "The top trend that's choosen is: " + str(top_trend) + "\n"
 
     # We then search through 1000 tweets using that top trend. We then only take the status part of the search, which is
     # the list of tweets that contain the top trend. This is a Dictionary object
@@ -73,18 +73,18 @@ def retweet():
     modified_results = []
     for curr_tweet in statuses:
         if(curr_tweet.get('retweet_count') > 100 or curr_tweet.get('favorite_count') > 100):
-            if(curr_tweet.get('retweeted_status') != None):
-                print("This is a tweet that was retweeted.")
 
-                # This get's the original tweet that this tweet has retweeted.
+            # This get's the original tweet if this tweet was a retweet.
+            if(curr_tweet.get('retweeted_status') != None):
                 orig_tweet = curr_tweet.get('retweeted_status')
+                print("This is a tweet that was retweeted.")
                 print("Tweet's status: " + orig_tweet.get('text'))
                 print("Tweet's favorite count: " + str(orig_tweet.get('favorite_count')))
                 print("Tweet's retweet count: " + str(orig_tweet.get('retweet_count')))
 
                 if(orig_tweet not in modified_results):
                     modified_results.append(orig_tweet)
-                    print("Found a new tweet that's not in the modified results. Added this tweet into it.")
+                    print("This tweet is not in the modified results. Now adding this tweet.")
 
             else:
                 print("This tweet was not a retweet.")
@@ -94,7 +94,7 @@ def retweet():
 
                 if(curr_tweet not in modified_results):
                     modified_results.append(curr_tweet)
-                    print("Found a new tweet that's not in the modified results. Added this tweet into it.")
+                    print("This tweet is not in the modified results. Now adding this tweet.")
             print
 
     # From here, we look through the list we made and see which tweet has the greatest amount of likes and retweets. Once
@@ -200,8 +200,8 @@ def retweet():
             print("The program has already retweeted this tweet.")
 
     # 20 minute timer to repeat
+    print("\n" + "Now for 20 minutes to run again...")
     time.sleep(20*60)
-    print("Finished this 20 minute iteration!")
 
 # Keeps on running until we manually quit the program
 while True:
