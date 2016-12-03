@@ -149,18 +149,18 @@ def retweet():
         print(highest_score)
 
 
-    tweet = associated_tweet
-    try:
-        publish = True
+        tweet = associated_tweet
+        try:
+            publish = True
 
-        if tweet.get('lang') and tweet.get('lang') != 'en':
-            publish = False
+            if tweet.get('lang') and tweet.get('lang') != 'en':
+                publish = False
 
-        if publish:
-            twitter_api.statuses.retweet(id=tweet.get('id'))
-            logging.debug("RT: {}".format(tweet['text']))
-    except Exception, ex:
-        print(ex)
+            if publish:
+                twitter_api.statuses.retweet(id=tweet.get('id'))
+                logging.debug("RT: {}".format(tweet['text']))
+        except Exception, ex:
+            print(ex)
     time.sleep(20)
 
 
