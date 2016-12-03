@@ -9,7 +9,7 @@ import logging
 import json
 import random
 from urllib import unquote
-import time, threading
+import time
 
 # In order to use the Twitter API, we need to authenticate ourselves.
 def retweet():
@@ -147,20 +147,22 @@ def retweet():
         print(associated_tweet.get('favorite_count'))
         print(associated_tweet.get('retweet_count'))
         print(highest_score)
-
-
-        tweet = associated_tweet
-        try:
-            publish = True
-
-            if tweet.get('lang') and tweet.get('lang') != 'en':
+        new_tweet = associated_tweet
+        publish = True
+        while publish = True:
+            if new_tweet.get('lang') and new_tweet.get('lang') != 'en':
                 publish = False
-
             if publish:
+                for i in range(0, 16): ## iterate through 16 times to get max No. of tweets
+                    user_timeline = twitter.get_user_timeline(screen_name="DrumpfBot353",count=200)
+                    for tweet in user_timeline:
+                        if id=tweet.get('id') == new_tweet.get('id')
+                            publish = False
+
                 twitter_api.statuses.retweet(id=tweet.get('id'))
                 logging.debug("RT: {}".format(tweet['text']))
-        except Exception, ex:
-            print(ex)
+    except Exception, ex:
+        print(ex)
     time.sleep(20)
 
 
