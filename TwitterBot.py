@@ -156,7 +156,7 @@ def retweet():
                 for i in range(0, 16): ## iterate through 16 times to get max No. of tweets
                     user_timeline = twitter.get_user_timeline(screen_name="DrumpfBot353",count=200)
                     for tweet in user_timeline:
-                        if id=tweet.get('id') == new_tweet.get('id')
+                        if tweet.get('id') == new_tweet.get('id')
                             publish = False
                             break
 
