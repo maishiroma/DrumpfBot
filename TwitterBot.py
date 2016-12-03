@@ -161,7 +161,7 @@ def retweet():
             logging.debug("RT: {}".format(tweet['text']))
     except Exception, ex:
         print(ex)
-        time.sleep(20)
+    time.sleep(20)
 
 
 
