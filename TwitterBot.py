@@ -149,17 +149,18 @@ def retweet():
         print(highest_score)
         new_tweet = associated_tweet
         publish = True
-        while publish == True:
-            if new_tweet.get('lang') and new_tweet.get('lang') != 'en':
-                publish = False
-            if publish == True:
-                for i in range(0, 16): ## iterate through 16 times to get max No. of tweets
-                    user_timeline = twitter.get_user_timeline(screen_name="DrumpfBot2016",count=200)
-                    for tweet in user_timeline:
-                        if (tweet.get('id') == new_tweet.get('id')):
-                            publish = False
-                twitter_api.statuses.retweet(id=tweet.get('id'))
-                logging.debug("RT: {}".format(tweet['text']))
+        if new_tweet.get('lang') and new_tweet.get('lang') != 'en':
+            publish = False
+        else:
+            for i in range(0, 16): ## iterate through 16 times to get max No. of tweets
+                user_timeline = twitter.get_user_timeline(screen_name="drumpfbot2016",count=200)
+                for tweet in user_timeline:
+                    if (tweet.get('id') == new_tweet.get('id')):
+                        publish = False
+        if publish:
+            twitter_api.statuses.retweet(id=tweet.get('id'))
+            logging.debug("RT: {}".format(tweet['text']))
+
 
     time.sleep(20)
 
