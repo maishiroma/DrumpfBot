@@ -162,7 +162,7 @@ def retweet():
             logging.debug("RT: {}".format(associated_tweet['text']))
 
 
-    time.sleep(20)
+    time.sleep(20*60)#20 minute timer to repeat
 
 
 
