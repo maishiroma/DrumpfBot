@@ -12,7 +12,7 @@ from urllib import unquote
 import time, threading
 def timer():
     print(time.ctime())
-    threading.Timer(10, foo).start()
+    threading.Timer(10, timer).start()
     retweet()
 
 
