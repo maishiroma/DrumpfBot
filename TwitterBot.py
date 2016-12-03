@@ -154,7 +154,7 @@ def retweet():
         else:
             for i in range(0, 16): ## iterate through 16 times to get max No. of tweets
                 name = twitter_api.account.verify_credentials()
-                user_timeline = twitter_api.statuses_user_timeline(screen_name=name.get('id'),count=200)
+                user_timeline = twitter_api.statuses_user_timeline(user_id=name.get('id_str'),count=200)
                 for tweet in user_timeline:
                     if (tweet.get('id') == new_tweet.get('id')):
                         publish = False
