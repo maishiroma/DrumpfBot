@@ -147,20 +147,19 @@ def retweet():
         print(associated_tweet.get('favorite_count'))
         print(associated_tweet.get('retweet_count'))
         print(highest_score)
-        new_tweet = associated_tweet
         publish = True
-        if new_tweet.get('lang') and new_tweet.get('lang') != 'en':
+        if associated_tweet.get('lang') and associated_tweet.get('lang') != 'en':
             publish = False
         else:
             for i in range(0, 16): ## iterate through 16 times to get max No. of tweets
                 name = twitter_api.account.verify_credentials()
                 user_timeline = twitter_api.statuses.user_timeline(user_id=name.get('id_str'),count=200)
                 for tweet in user_timeline:
-                    if (tweet.get('id') == new_tweet.get('id')):
+                    if (tweet.get('id') == associated_tweet.get('id')):
                         publish = False
         if publish:
-            twitter_api.statuses.retweet(id=new_tweet.get('id'))
-            logging.debug("RT: {}".format(new_tweet['text']))
+            twitter_api.statuses.retweet(id=associated_tweet.get('id'))
+            logging.debug("RT: {}".format(associated_tweet['text']))
 
 
     time.sleep(20)
