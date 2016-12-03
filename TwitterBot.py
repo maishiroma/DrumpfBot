@@ -205,6 +205,8 @@ def retweet():
             print("Successfully retweeted most popular tweet!")
         else:
             print("The program has already retweeted this tweet.")
+    else:
+        print("Unable to find any tweets that met criteria for retweeting.")
 
     # 20 minute timer to repeat
     print("\n" + "Now waiting 20 minutes for program to run again...")
