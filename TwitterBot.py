@@ -4,7 +4,6 @@
 # https://github.com/sixohsix/twitter for the type of API we're using
 # Authors: Matthew Shiroma and Ryan Britton
 # Version 1.0
-from twython import Twython
 import twitter
 import logging
 import json
