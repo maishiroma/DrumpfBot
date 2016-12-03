@@ -10,7 +10,6 @@ import json
 import random
 from urllib import unquote
 import time, threading
-retweet()
 def timer():
     print(time.ctime())
     threading.Timer(10, foo).start()
@@ -173,7 +172,7 @@ def retweet():
 
 
 
-
+retweet()
 # tweetNumb = random.randrange(0,len(statuses))
 # selected_tweet_ID = statuses[tweetNumb].get('id')
 # print("The selected tweet's ID is: ")
