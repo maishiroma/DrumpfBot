@@ -150,6 +150,7 @@ def retweet():
     # This part determines which tweet get's retweeted. If there's a highest sentiment tweet, the program will
     # retweet that. Else, the program will retweet the tweet that is the most popular.
     publish = True
+    name = twitter_api.account.verify_credentials()
     if(associated_tweet != None):
         print("Highest sentiment tweet's status: " + associated_tweet.get('text'))
         print("Highest sentiment tweet's favorite count: " + str(associated_tweet.get('favorite_count')))
@@ -161,13 +162,16 @@ def retweet():
         else:
             # iterate through 16 times to get max No. of tweets
             for i in range(0, 16):
-                name = twitter_api.account.verify_credentials()
-                user_timeline = twitter_api.statuses.user_timeline(user_id=name.get('id_str'),count=200)
-                for tweet in user_timeline:
-                    if (tweet.get('id') == associated_tweet.get('id')):
-                        publish = False
+                if(publish == False):
+                    break
+                else:
+                    user_timeline = twitter_api.statuses.user_timeline(user_id=name.get('id_str'),count=200)
+                    for tweet in user_timeline:
+                        if (tweet.get('id') == associated_tweet.get('id')):
+                            publish = False
+                            break
 
-        # This part checks if we have already retweeted this
+        # This part checks if we have already retweeted this. Else, we print an error message.
         if publish:
             twitter_api.statuses.retweet(id=associated_tweet.get('id'))
             logging.debug("RT: {}".format(associated_tweet['text']))
@@ -185,13 +189,16 @@ def retweet():
         else:
             # iterate through 16 times to get max No. of tweets
             for i in range(0, 16):
-                name = twitter_api.account.verify_credentials()
-                user_timeline = twitter_api.statuses.user_timeline(user_id=name.get('id_str'),count=200)
-                for tweet in user_timeline:
-                    if (tweet.get('id') == popular_tweet.get('id')):
-                        publish = False
+                if(publish == False):
+                    break
+                else:
+                    user_timeline = twitter_api.statuses.user_timeline(user_id=name.get('id_str'),count=200)
+                    for tweet in user_timeline:
+                        if (tweet.get('id') == popular_tweet.get('id')):
+                            publish = False
+                            break
 
-        # This part checks if we have already retweeted this
+        # This part checks if we have already retweeted this. Else, we print an error message.
         if publish:
             twitter_api.statuses.retweet(id=popular_tweet.get('id'))
             logging.debug("RT: {}".format(popular_tweet['text']))
@@ -200,7 +207,7 @@ def retweet():
             print("The program has already retweeted this tweet.")
 
     # 20 minute timer to repeat
-    print("\n" + "Now for 20 minutes to run again...")
+    print("\n" + "Now waiting 20 minutes for program to run again...")
     time.sleep(20*60)
 
 # Keeps on running until we manually quit the program
