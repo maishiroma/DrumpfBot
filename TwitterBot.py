@@ -10,12 +10,6 @@ import json
 import random
 from urllib import unquote
 import time, threading
-def timer():
-    print(time.ctime())
-    threading.Timer(10, timer).start()
-    retweet()
-
-
 
 # In order to use the Twitter API, we need to authenticate ourselves.
 def retweet():
@@ -167,12 +161,12 @@ def retweet():
             logging.debug("RT: {}".format(tweet['text']))
     except Exception, ex:
         print(ex)
-        timer()
+        time.sleep(20)
 
 
 
-
-retweet()
+while True:
+    retweet()
 # tweetNumb = random.randrange(0,len(statuses))
 # selected_tweet_ID = statuses[tweetNumb].get('id')
 # print("The selected tweet's ID is: ")
