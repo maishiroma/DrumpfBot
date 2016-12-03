@@ -149,7 +149,7 @@ def retweet():
         print(highest_score)
         new_tweet = associated_tweet
         publish = True
-        while publish = True:
+        while publish == True:
             if new_tweet.get('lang') and new_tweet.get('lang') != 'en':
                 publish = False
             if publish:
