@@ -26,3 +26,6 @@ Our class project for CPSC 353 will be to create a Twitter program using the bas
 3. Run TwitterBot.py by typing in “python TwitterBot.py”.
 4. The program will display the top trends, the tweets with more than 100 likes/retweets, and the tweet that has the most likes/retweets. The second part will then display the tweet that has the highest sentiment score. That tweet will be the one that is retweeted.
 5. To check if the programmed retweeted that tweet, go to [this Twitter page](https://twitter.com/drumpfbot2016) to find the retweet. If nothing is on there, it was either because there isn't a tweet that was over 100 likes or retweets, or there wasn't a tweet with a positive sentiment score.
+
+#### Disclaimer
+The name "DrumpfBot" is only meant to be taken as an "inside joke" with the collaborators, and by no means associates nor endorses this project with actual people.
